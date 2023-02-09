@@ -964,45 +964,45 @@ def set_other_cuda_vars(environ_cp):
 
 def system_specific_test_config(environ_cp):
   """Add default build and test flags required for TF tests to bazelrc."""
-  write_to_bazelrc('test --flaky_test_attempts=3')
-  write_to_bazelrc('test --test_size_filters=small,medium')
+#   write_to_bazelrc('test --flaky_test_attempts=3')
+#   write_to_bazelrc('test --test_size_filters=small,medium')
 
-  # Each instance of --test_tag_filters or --build_tag_filters overrides all
-  # previous instances, so we need to build up a complete list and write a
-  # single list of filters for the .bazelrc file.
+#   # Each instance of --test_tag_filters or --build_tag_filters overrides all
+#   # previous instances, so we need to build up a complete list and write a
+#   # single list of filters for the .bazelrc file.
 
-  # Filters to use with both --test_tag_filters and --build_tag_filters
-  test_and_build_filters = ['-benchmark-test', '-no_oss']
-  # Additional filters for --test_tag_filters beyond those in
-  # test_and_build_filters
-  test_only_filters = ['-oss_serial']
-  if is_windows():
-    test_and_build_filters.append('-no_windows')
-    if ((environ_cp.get('TF_NEED_CUDA', None) == '1') or
-        (environ_cp.get('TF_NEED_ROCM', None) == '1')):
-      test_and_build_filters += ['-no_windows_gpu', '-no_gpu']
-    else:
-      test_and_build_filters.append('-gpu')
-  elif is_macos():
-    test_and_build_filters += ['-gpu', '-nomac', '-no_mac']
-  elif is_linux():
-    if ((environ_cp.get('TF_NEED_CUDA', None) == '1') or
-        (environ_cp.get('TF_NEED_ROCM', None) == '1')):
-      test_and_build_filters.append('-no_gpu')
-      write_to_bazelrc('test --test_env=LD_LIBRARY_PATH')
-    else:
-      test_and_build_filters.append('-gpu')
+#   # Filters to use with both --test_tag_filters and --build_tag_filters
+#   test_and_build_filters = ['-benchmark-test', '-no_oss']
+#   # Additional filters for --test_tag_filters beyond those in
+#   # test_and_build_filters
+#   test_only_filters = ['-oss_serial']
+#   if is_windows():
+#     test_and_build_filters.append('-no_windows')
+#     if ((environ_cp.get('TF_NEED_CUDA', None) == '1') or
+#         (environ_cp.get('TF_NEED_ROCM', None) == '1')):
+#       test_and_build_filters += ['-no_windows_gpu', '-no_gpu']
+#     else:
+#       test_and_build_filters.append('-gpu')
+#   elif is_macos():
+#     test_and_build_filters += ['-gpu', '-nomac', '-no_mac']
+#   elif is_linux():
+#     if ((environ_cp.get('TF_NEED_CUDA', None) == '1') or
+#         (environ_cp.get('TF_NEED_ROCM', None) == '1')):
+#       test_and_build_filters.append('-no_gpu')
+#       write_to_bazelrc('test --test_env=LD_LIBRARY_PATH')
+#     else:
+#       test_and_build_filters.append('-gpu')
 
-  # Disable tests with "v1only" tag in "v2" Bazel config, but not in "v1" config
-  write_to_bazelrc('test:v1 --test_tag_filters=%s' %
-                   ','.join(test_and_build_filters + test_only_filters))
-  write_to_bazelrc('test:v1 --build_tag_filters=%s' %
-                   ','.join(test_and_build_filters))
-  write_to_bazelrc(
-      'test:v2 --test_tag_filters=%s' %
-      ','.join(test_and_build_filters + test_only_filters + ['-v1only']))
-  write_to_bazelrc('test:v2 --build_tag_filters=%s' %
-                   ','.join(test_and_build_filters + ['-v1only']))
+#   # Disable tests with "v1only" tag in "v2" Bazel config, but not in "v1" config
+#   write_to_bazelrc('test:v1 --test_tag_filters=%s' %
+#                    ','.join(test_and_build_filters + test_only_filters))
+#   write_to_bazelrc('test:v1 --build_tag_filters=%s' %
+#                    ','.join(test_and_build_filters))
+#   write_to_bazelrc(
+#       'test:v2 --test_tag_filters=%s' %
+#       ','.join(test_and_build_filters + test_only_filters + ['-v1only']))
+#   write_to_bazelrc('test:v2 --build_tag_filters=%s' %
+#                    ','.join(test_and_build_filters + ['-v1only']))
 
 
 def set_system_libs_flag(environ_cp):
